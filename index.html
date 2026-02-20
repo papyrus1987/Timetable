@@ -546,6 +546,7 @@ function fmt(h, m) {
 
 let slots = loadSlots();
 let subjects = loadSubjects();
+let contacts = [];
 
 function buildTable() {
   const tbody = document.getElementById('tbody');
@@ -735,7 +736,6 @@ saveSlots = function() {
 };
 
 // ── 학원 연락처 기능 ─────────────────────────────
-let contacts = [];
 
 function loadContacts() {
   try {
