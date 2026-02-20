@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>방과 후 시간표</title>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: #eef0f3;
+  min-height: 100vh;
+  padding: 36px 20px 60px;
+}
+
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-family: 'Gaegu', cursive;
+  font-size: 2.8rem;
+  text-align: center;
+  color: #4a5568;
+  margin-bottom: 6px;
+  letter-spacing: 2px;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 0.82rem;
+  color: #999;
+  margin-bottom: 10px;
+}
+
+.info-badges {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 26px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  padding: 5px 16px;
+  border-radius: 30px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.badge-mwf { background: #edf0f3; color: #5a6a7a; border: 1.5px solid #c8d0d8; }
+.badge-tth { background: #edf0f3; color: #5a6a7a; border: 1.5px solid #c8d0d8; }
+
+
+.schedule-notice {
+  text-align: center;
+  margin-bottom: 20px;
+  line-height: 2;
+}
+
+.schedule-notice .notice-line {
+  display: inline-block;
+  background: white;
+  border-radius: 10px;
+  padding: 7px 20px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #4a5568;
+  box-shadow: 0 2px 10px rgba(58,58,110,0.08);
+  letter-spacing: 0.3px;
+}
+
+.schedule-notice .notice-name {
+  color: #e05530;
+  margin-right: 10px;
+  font-size: 1.9rem;
+  font-weight: 900;
+  font-family: 'Gaegu', cursive;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* ─── 테이블 ─── */
+.table-wrap {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 6px 40px rgba(58,58,110,0.12);
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 620px;
+}
+
+/* 헤더 */
+thead th {
+  padding: 14px 8px;
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: white;
+  text-align: center;
+  border-bottom: 3px solid rgba(255,255,255,0.2);
+}
+
+th.h-time { background: #6b7280; font-size: 0.78rem; font-weight: 700; color: #e5e7eb; width: 110px; }
+th.h-mon  { background: #7c8fa1; }
+th.h-tue  { background: #7c8fa1; }
+th.h-wed  { background: #7c8fa1; }
+th.h-thu  { background: #7c8fa1; }
+th.h-fri  { background: #7c8fa1; }
+
+/* 바디 행 */
+tbody tr {
+  border-bottom: 1px solid #eaecee;
+}
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: #f9fafb; }
+
+/* 시간 레이블 컬럼 */
+td.td-time {
+  background: #f5f6f7;
+  text-align: center;
+  vertical-align: middle;
+  padding: 4px 6px;
+  border-right: 2px solid #e5e7ea;
+}
+
+.time-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.time-block input.time-input {
+  width: 44px;
+  border: none;
+  background: transparent;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-align: center;
+  padding: 2px 0;
+  border-bottom: 1.5px dashed #c4c9d0;
+  outline: none;
+  cursor: text;
+}
+
+.time-block input.time-input:focus {
+  border-bottom-color: #7c8fa1;
+  background: #f4f6f8;
+  border-radius: 3px;
+}
+
+.time-sep { color: #aab; font-size: 0.7rem; }
+
+/* 과목 입력 셀 */
+td.cell {
+  height: 76px;
+  padding: 0;
+  vertical-align: middle;
+  text-align: center;
+}
+
+td.cell textarea.subj {
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 10px 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+  resize: none;
+  line-height: 1.6;
+  display: block;
+}
+
+td.cell textarea.subj::placeholder {
+  font-weight: 400;
+  font-size: 0.72rem;
+}
+
+/* 통일 색상 - 뮤트 톤 */
+td.cell textarea.subj { color: #4a5568; }
+td.cell textarea.subj:focus { background: #f4f6f8; }
+td.cell textarea.subj::placeholder { color: #b0b8c4; }
+
+/* 비활성 셀 */
+td.cell.inactive {
+  background: repeating-linear-gradient(
+    45deg,
+    #f5f5fa,
+    #f5f5fa 4px,
+    #eeeef5 4px,
+    #eeeef5 8px
+  );
+}
+td.cell.inactive textarea.subj {
+  pointer-events: none;
+  color: transparent !important;
+}
+
+.share-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  background: white;
+  border-radius: 12px;
+  padding: 10px 16px;
+  box-shadow: 0 2px 12px rgba(58,58,110,0.08);
+  flex-wrap: wrap;
+}
+
+.share-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.share-bar input {
+  flex: 1;
+  border: 1.5px solid #e0e3e8;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 0.78rem;
+  color: #4a5568;
+  background: #f8f9fa;
+  outline: none;
+  min-width: 200px;
+  font-family: monospace;
+}
+
+.share-bar button {
+  padding: 8px 18px;
+  background: #7c8fa1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: 'Noto Sans KR', sans-serif;
+  transition: transform 0.15s;
+}
+
+.share-bar button:hover { transform: translateY(-1px); }
+
+/* 버튼 */
+.btn-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 11px 28px;
+  border: none;
+  border-radius: 50px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  letter-spacing: 0.5px;
+}
+
+button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+button:active { transform: translateY(0); }
+
+.btn-save  { background: #5a7a6a; color: white; }
+.btn-print { background: #6b7a8a; color: white; }
+.btn-reset-time { background: #888; color: white; }
+.btn-clear { background: #8a6a6a; color: white; }
+
+.tip {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #aaa;
+  margin-top: 14px;
+}
+
+@media print {
+  body { background: white; padding: 10px; }
+  .btn-row, .tip, .info-badges, .subtitle { display: none; }
+  h1 { font-size: 2rem; color: #333; }
+  .table-wrap { box-shadow: none; }
+  .time-block input.time-input { border-bottom: none; }
+  td.cell.inactive { background: #f0f0f0; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>유하 시간표</h1>
+  <p class="subtitle">학원·활동 이름을 칸에 입력하고, 시간도 직접 수정할 수 있어요!</p>
+
+  <div class="info-badges">
+    <span class="badge badge-mwf">🏫 월·수·금 — 1:40 하교</span>
+    <span class="badge badge-tth">🏫 화·목 — 12:50 하교</span>
+  </div>
+
+
+  <div class="schedule-notice">
+    <div class="notice-line"><span class="notice-name">제하</span>08:30 4단지 횡단보도 &nbsp;/&nbsp; 16:30 4단지 횡단보도</div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="h-time">시간</th>
+          <th class="h-mon">월요일</th>
+          <th class="h-tue">화요일</th>
+          <th class="h-wed">수요일</th>
+          <th class="h-thu">목요일</th>
+          <th class="h-fri">금요일</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="share-bar">
+    <span class="share-label">📎 공유 링크</span>
+    <input type="text" id="share-url" readonly placeholder="내용을 입력하면 링크가 생성됩니다">
+    <button id="copy-btn" onclick="copyURL()">🔗 링크 복사</button>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-save" onclick="saveAll()">💾 저장</button>
+    <button class="btn-reset-time" onclick="resetTimes()">🔄 시간 초기화</button>
+    <button class="btn-print" onclick="window.print()">🖨️ 인쇄</button>
+    <button class="btn-clear" onclick="clearAll()">🗑️ 전체 지우기</button>
+  </div>
+  <p class="tip">⏱ 시간 칸을 클릭하면 직접 수정할 수 있어요 &nbsp;|&nbsp; 입력 내용은 자동 저장됩니다</p>
+</div>
+
+<script>
+// ── 기본 시간 슬롯 정의 ──────────────────────────
+// 월수금: 13:40 하교 → 14:00, 15:00, 16:00, 17:00
+// 화목  : 12:50 하교 → 13:00, 14:00, 15:00, 16:00, 17:00
+
+const DEFAULT_SLOTS = [
+  { startH:13, startM:0,  endH:14, endM:0  },  // 화목 전용 첫 슬롯
+  { startH:14, startM:0,  endH:15, endM:0  },
+  { startH:15, startM:0,  endH:16, endM:0  },
+  { startH:16, startM:0,  endH:17, endM:0  },
+];
+
+// 화목(tue, thu)은 슬롯 0(13:00~14:00)도 활성
+// 월수금(mon, wed, fri)은 슬롯 0 비활성
+const DAYS = ['mon','tue','wed','thu','fri'];
+const ACTIVE_FROM = { mon:1, tue:0, wed:1, thu:0, fri:1 }; // 활성 슬롯 시작 인덱스
+
+const STORAGE_KEY_SLOTS = 'tt_slots';
+const STORAGE_KEY_SUBJ  = 'tt_subj';
+
+function loadSlots() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY_SLOTS);
+    if (s) return JSON.parse(s);
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_SLOTS));
+}
+
+function loadSubjects() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY_SUBJ);
+    if (s) return JSON.parse(s);
+  } catch(e) {}
+  return {};
+}
+
+function fmt(h, m) {
+  return `${h}:${String(m).padStart(2,'0')}`;
+}
+
+let slots = loadSlots();
+let subjects = loadSubjects();
+
+function buildTable() {
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = '';
+
+  slots.forEach((slot, si) => {
+    const tr = document.createElement('tr');
+
+    // ── 시간 셀 ──
+    const tdTime = document.createElement('td');
+    tdTime.className = 'td-time';
+
+    const block = document.createElement('div');
+    block.className = 'time-block';
+
+    // 시작 시간 input
+    const inStart = document.createElement('input');
+    inStart.className = 'time-input';
+    inStart.value = fmt(slot.startH, slot.startM);
+    inStart.title = '시작 시간 수정 (예: 14:00)';
+    inStart.addEventListener('change', () => {
+      const parsed = parseTime(inStart.value);
+      if (parsed) {
+        slots[si].startH = parsed.h;
+        slots[si].startM = parsed.m;
+        saveSlots();
+      } else {
+        inStart.value = fmt(slot.startH, slot.startM);
+      }
+    });
+
+    const sep = document.createElement('span');
+    sep.className = 'time-sep';
+    sep.textContent = '~';
+
+    // 종료 시간 input
+    const inEnd = document.createElement('input');
+    inEnd.className = 'time-input';
+    inEnd.value = fmt(slot.endH, slot.endM);
+    inEnd.title = '종료 시간 수정 (예: 15:00)';
+    inEnd.addEventListener('change', () => {
+      const parsed = parseTime(inEnd.value);
+      if (parsed) {
+        slots[si].endH = parsed.h;
+        slots[si].endM = parsed.m;
+        saveSlots();
+      } else {
+        inEnd.value = fmt(slot.endH, slot.endM);
+      }
+    });
+
+    block.appendChild(inStart);
+    block.appendChild(sep);
+    block.appendChild(inEnd);
+    tdTime.appendChild(block);
+    tr.appendChild(tdTime);
+
+    // ── 요일 셀 ──
+    DAYS.forEach(day => {
+      const active = si >= ACTIVE_FROM[day];
+      const td = document.createElement('td');
+      td.className = 'cell ' + day + (active ? '' : ' inactive');
+
+      const inp = document.createElement('textarea');
+      inp.className = 'subj';
+      inp.rows = 2;
+
+      if (active) {
+        const key = `${day}_${si}`;
+        inp.placeholder = '학원 / 활동';
+        inp.value = subjects[key] || '';
+        inp.addEventListener('input', () => {
+          subjects[key] = inp.value;
+          saveSubjects();
+        });
+      }
+
+      td.appendChild(inp);
+      tr.appendChild(td);
+    });
+
+    tbody.appendChild(tr);
+  });
+}
+
+function parseTime(str) {
+  const m = str.match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return null;
+  const h = parseInt(m[1]), min = parseInt(m[2]);
+  if (h < 0 || h > 23 || min < 0 || min > 59) return null;
+  return { h, m: min };
+}
+
+function saveSlots()    { localStorage.setItem(STORAGE_KEY_SLOTS, JSON.stringify(slots)); }
+function saveSubjects()  { localStorage.setItem(STORAGE_KEY_SUBJ, JSON.stringify(subjects)); }
+
+function saveAll() {
+  saveSlots();
+  saveSubjects();
+  const btn = document.querySelector('.btn-save');
+  btn.textContent = '✅ 저장됨!';
+  setTimeout(() => btn.textContent = '💾 저장', 1500);
+}
+
+function resetTimes() {
+  if (!confirm('시간을 기본값으로 초기화할까요?')) return;
+  slots = JSON.parse(JSON.stringify(DEFAULT_SLOTS));
+  saveSlots();
+  buildTable();
+}
+
+function clearAll() {
+  if (!confirm('과목 내용을 모두 지울까요?')) return;
+  subjects = {};
+  saveSubjects();
+  updateShareURL();
+  buildTable();
+}
+
+// ── URL 공유 기능 ─────────────────────────────
+function encodeState() {
+  const data = { slots, subjects };
+  return btoa(encodeURIComponent(JSON.stringify(data)));
+}
+
+function decodeState(encoded) {
+  try {
+    return JSON.parse(decodeURIComponent(atob(encoded)));
+  } catch(e) { return null; }
+}
+
+function updateShareURL() {
+  const encoded = encodeState();
+  const url = location.origin + location.pathname + '?data=' + encoded;
+  const el = document.getElementById('share-url');
+  if (el) el.value = url;
+}
+
+function copyURL() {
+  const el = document.getElementById('share-url');
+  el.select();
+  document.execCommand('copy');
+  const btn = document.getElementById('copy-btn');
+  btn.textContent = '✅ 복사됨!';
+  setTimeout(() => btn.textContent = '🔗 링크 복사', 1500);
+}
+
+// 페이지 로드 시 URL에서 데이터 복원
+function loadFromURL() {
+  const params = new URLSearchParams(location.search);
+  const data = params.get('data');
+  if (data) {
+    const parsed = decodeState(data);
+    if (parsed) {
+      if (parsed.slots) slots = parsed.slots;
+      if (parsed.subjects) subjects = parsed.subjects;
+    }
+  }
+}
+
+loadFromURL();
+buildTable();
+updateShareURL();
+
+// 내용 변경 시 URL 자동 갱신
+const origSaveSubjects = saveSubjects;
+saveSubjects = function() {
+  origSaveSubjects();
+  updateShareURL();
+};
+const origSaveSlots = saveSlots;
+saveSlots = function() {
+  origSaveSlots();
+  updateShareURL();
+};
+</script>
+</body>
+</html>
