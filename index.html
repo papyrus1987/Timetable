@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
+<html lang="ko"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>방과 후 시간표</title>
-<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -542,13 +540,13 @@ button:active { transform: translateY(0); }
           <th class="h-fri">금요일</th>
         </tr>
       </thead>
-      <tbody id="tbody"></tbody>
+      <tbody id="tbody"><tr><td class="td-time"><div class="time-block"><input class="time-input" title="시작 시간 수정 (예: 14:00)"><span class="time-sep">~</span><input class="time-input" title="종료 시간 수정 (예: 15:00)"></div></td><td class="cell mon inactive"><textarea class="subj" rows="2"></textarea></td><td class="cell tue"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell wed inactive"><textarea class="subj" rows="2"></textarea></td><td class="cell thu"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell fri inactive"><textarea class="subj" rows="2"></textarea></td></tr><tr><td class="td-time"><div class="time-block"><input class="time-input" title="시작 시간 수정 (예: 14:00)"><span class="time-sep">~</span><input class="time-input" title="종료 시간 수정 (예: 15:00)"></div></td><td class="cell mon"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell tue"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell wed"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell thu"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell fri"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td></tr><tr><td class="td-time"><div class="time-block"><input class="time-input" title="시작 시간 수정 (예: 14:00)"><span class="time-sep">~</span><input class="time-input" title="종료 시간 수정 (예: 15:00)"></div></td><td class="cell mon"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell tue"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell wed"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell thu"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell fri"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td></tr><tr><td class="td-time"><div class="time-block"><input class="time-input" title="시작 시간 수정 (예: 14:00)"><span class="time-sep">~</span><input class="time-input" title="종료 시간 수정 (예: 15:00)"></div></td><td class="cell mon"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell tue"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell wed"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell thu"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell fri"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td></tr></tbody>
     </table>
   </div>
 
   <div class="share-bar">
     <span class="share-label">📎 공유 링크</span>
-    <input type="text" id="share-url" readonly placeholder="내용을 입력하면 링크가 생성됩니다">
+    <input type="text" id="share-url" readonly="" placeholder="내용을 입력하면 링크가 생성됩니다">
     <button id="copy-btn" onclick="copyURL()">🔗 링크 복사</button>
   </div>
 
@@ -559,7 +557,7 @@ button:active { transform: translateY(0); }
 
   <div class="contact-section">
     <div class="contact-title">📞 학원 연락처</div>
-    <div class="contact-list" id="contact-list"></div>
+    <div class="contact-list" id="contact-list"><div class="contact-row"><input class="inp-name" placeholder="학원 이름"><input class="inp-phone" placeholder="전화번호" type="tel"><button class="del-btn">삭제</button></div></div>
     <button class="btn-add-contact" onclick="addContact()">+ 학원 추가</button>
   </div>
 
@@ -568,7 +566,7 @@ button:active { transform: translateY(0); }
     <input class="token-input" id="gh-token" type="password" placeholder="GitHub Token 입력 (ghp_...)">
     <button class="sync-btn" onclick="saveToken()">토큰 저장</button>
     <button class="sync-btn" onclick="pushToGitHub()">🔄 GitHub에 저장</button>
-    <div class="sync-status" id="sync-status"></div>
+    <div class="sync-status" id="sync-status">⏳ GitHub에 저장 중...</div>
   </div>
 
   <div class="btn-row">
@@ -941,5 +939,6 @@ async function pushToGitHub() {
 }
 
 </script>
-</body>
-</html>
+
+
+</body></html>
