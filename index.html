@@ -796,7 +796,7 @@ async function loadFromGitHub() {
       if (data.slots) slots = data.slots;
       if (data.subjects) subjects = data.subjects;
       if (data.contacts) { contacts = data.contacts; }
-      if (data.memo && document.getElementById('memo-area')) {
+      if (data.memo != null && document.getElementById('memo-area')) {
         document.getElementById('memo-area').value = data.memo;
       }
     }
@@ -808,14 +808,14 @@ async function loadFromGitHub() {
   if (contacts.length) renderContacts();
 }
 
-loadFromGitHub();
 // ── 메모 기능 ─────────────────────────────
 const memoArea = document.getElementById('memo-area');
-memoArea.value = localStorage.getItem('tt_memo') || '';
 memoArea.addEventListener('input', () => {
   localStorage.setItem('tt_memo', memoArea.value);
   updateShareURL();
 });
+
+loadFromGitHub();
 
 
 updateShareURL();
