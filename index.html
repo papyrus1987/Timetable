@@ -581,6 +581,10 @@ button:active { transform: translateY(0); }
 </div>
 
 <script>
+const GITHUB_USER = 'papyrus1987';
+const GITHUB_REPO = 'Timetable';
+const GITHUB_FILE = 'index.html';
+
 // ── 기본 시간 슬롯 정의 ──────────────────────────
 // 월수금: 13:40 하교 → 14:00, 15:00, 16:00, 17:00
 // 화목  : 12:50 하교 → 13:00, 14:00, 15:00, 16:00, 17:00
@@ -892,9 +896,7 @@ renderContacts();
 
 
 // ── GitHub 자동저장 기능 ─────────────────────────────
-const GITHUB_USER = 'papyrus1987';
-const GITHUB_REPO = 'Timetable';
-const GITHUB_FILE = 'index.html';
+
 
 function saveToken() {
   const token = document.getElementById('gh-token').value.trim();
