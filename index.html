@@ -1,8 +1,10 @@
-<html lang="ko"><head>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>방과 후 시간표</title>
-<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -540,13 +542,13 @@ button:active { transform: translateY(0); }
           <th class="h-fri">금요일</th>
         </tr>
       </thead>
-      <tbody id="tbody"><tr><td class="td-time"><div class="time-block"><input class="time-input" title="시작 시간 수정 (예: 14:00)"><span class="time-sep">~</span><input class="time-input" title="종료 시간 수정 (예: 15:00)"></div></td><td class="cell mon inactive"><textarea class="subj" rows="2"></textarea></td><td class="cell tue"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell wed inactive"><textarea class="subj" rows="2"></textarea></td><td class="cell thu"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell fri inactive"><textarea class="subj" rows="2"></textarea></td></tr><tr><td class="td-time"><div class="time-block"><input class="time-input" title="시작 시간 수정 (예: 14:00)"><span class="time-sep">~</span><input class="time-input" title="종료 시간 수정 (예: 15:00)"></div></td><td class="cell mon"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell tue"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell wed"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell thu"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell fri"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td></tr><tr><td class="td-time"><div class="time-block"><input class="time-input" title="시작 시간 수정 (예: 14:00)"><span class="time-sep">~</span><input class="time-input" title="종료 시간 수정 (예: 15:00)"></div></td><td class="cell mon"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell tue"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell wed"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell thu"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell fri"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td></tr><tr><td class="td-time"><div class="time-block"><input class="time-input" title="시작 시간 수정 (예: 14:00)"><span class="time-sep">~</span><input class="time-input" title="종료 시간 수정 (예: 15:00)"></div></td><td class="cell mon"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell tue"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell wed"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell thu"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td><td class="cell fri"><textarea class="subj" rows="2" placeholder="학원 / 활동"></textarea></td></tr></tbody>
+      <tbody id="tbody"></tbody>
     </table>
   </div>
 
   <div class="share-bar">
     <span class="share-label">📎 공유 링크</span>
-    <input type="text" id="share-url" readonly="" placeholder="내용을 입력하면 링크가 생성됩니다">
+    <input type="text" id="share-url" readonly placeholder="내용을 입력하면 링크가 생성됩니다">
     <button id="copy-btn" onclick="copyURL()">🔗 링크 복사</button>
   </div>
 
@@ -557,16 +559,16 @@ button:active { transform: translateY(0); }
 
   <div class="contact-section">
     <div class="contact-title">📞 학원 연락처</div>
-    <div class="contact-list" id="contact-list"><div class="contact-row"><input class="inp-name" placeholder="학원 이름"><input class="inp-phone" placeholder="전화번호" type="tel"><button class="del-btn">삭제</button></div></div>
+    <div class="contact-list" id="contact-list"></div>
     <button class="btn-add-contact" onclick="addContact()">+ 학원 추가</button>
   </div>
 
   <div class="github-sync">
     <span class="sync-label">🐙 GitHub 자동저장</span>
-    <input class="token-input" id="gh-token" type="password" placeholder="토큰 저장됨 (변경하려면 새로 입력)">
+    <input class="token-input" id="gh-token" type="password" placeholder="GitHub Token 입력 (ghp_...)">
     <button class="sync-btn" onclick="saveToken()">토큰 저장</button>
     <button class="sync-btn" onclick="pushToGitHub()">🔄 GitHub에 저장</button>
-    <div class="sync-status" id="sync-status">⏳ GitHub에 저장 중...</div>
+    <div class="sync-status" id="sync-status"></div>
   </div>
 
   <div class="btn-row">
@@ -784,8 +786,29 @@ function loadFromURL() {
   }
 }
 
-loadFromURL();
-buildTable();
+// GitHub data.json에서 데이터 로드
+async function loadFromGitHub() {
+  try {
+    const url = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/data.json?t=${Date.now()}`;
+    const res = await fetch(url);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.slots) slots = data.slots;
+      if (data.subjects) subjects = data.subjects;
+      if (data.contacts) { contacts = data.contacts; }
+      if (data.memo && document.getElementById('memo-area')) {
+        document.getElementById('memo-area').value = data.memo;
+      }
+    }
+  } catch(e) {
+    // data.json 없으면 로컬 데이터 사용
+  }
+  buildTable();
+  updateShareURL();
+  if (contacts.length) renderContacts();
+}
+
+loadFromGitHub();
 // ── 메모 기능 ─────────────────────────────
 const memoArea = document.getElementById('memo-area');
 memoArea.value = localStorage.getItem('tt_memo') || '';
@@ -888,6 +911,17 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+async function githubRequest(token, method, path, body) {
+  const url = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`;
+  const headers = {
+    'Authorization': `token ${token}`,
+    'Accept': 'application/vnd.github.v3+json',
+    'Content-Type': 'application/json'
+  };
+  const res = await fetch(url, { method, headers, body: body ? JSON.stringify(body) : undefined });
+  return res.json();
+}
+
 async function pushToGitHub() {
   const token = localStorage.getItem('gh_token');
   if (!token) {
@@ -898,40 +932,28 @@ async function pushToGitHub() {
   document.getElementById('sync-status').textContent = '⏳ GitHub에 저장 중...';
 
   try {
-    // 현재 파일의 SHA 가져오기
-    const getRes = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`, {
-      headers: {
-        'Authorization': `token ${token}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
-    const getData = await getRes.json();
-    const sha = getData.sha;
+    const memo = document.getElementById('memo-area') ? document.getElementById('memo-area').value : '';
+    const data = { slots, subjects, contacts, memo };
+    const jsonStr = JSON.stringify(data, null, 2);
+    const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
 
-    // 현재 HTML 전체를 base64로 인코딩
-    const htmlContent = document.documentElement.outerHTML;
-    const encoded = btoa(unescape(encodeURIComponent(htmlContent)));
+    // data.json SHA 가져오기 (없으면 새로 생성)
+    let sha = undefined;
+    const getRes = await githubRequest(token, 'GET', 'data.json');
+    if (getRes.sha) sha = getRes.sha;
 
-    // 파일 업데이트
-    const putRes = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `token ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        message: '시간표 업데이트',
-        content: encoded,
-        sha: sha
-      })
-    });
+    const body = {
+      message: '시간표 업데이트',
+      content: encoded,
+    };
+    if (sha) body.sha = sha;
 
-    if (putRes.ok) {
-      document.getElementById('sync-status').textContent = '✅ GitHub 저장 완료! 1~2분 후 반영돼요.';
+    const putRes = await githubRequest(token, 'PUT', 'data.json', body);
+
+    if (putRes.content) {
+      document.getElementById('sync-status').textContent = '✅ 저장 완료! 잠시 후 모든 기기에 반영돼요.';
     } else {
-      const err = await putRes.json();
-      document.getElementById('sync-status').textContent = '❌ 오류: ' + (err.message || '저장 실패');
+      document.getElementById('sync-status').textContent = '❌ 오류: ' + (putRes.message || '저장 실패');
     }
   } catch(e) {
     document.getElementById('sync-status').textContent = '❌ 오류: ' + e.message;
@@ -939,6 +961,5 @@ async function pushToGitHub() {
 }
 
 </script>
-
-
-</body></html>
+</body>
+</html>
